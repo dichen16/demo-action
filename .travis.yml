@@ -1,5 +1,11 @@
 os: linux
 
+sudo: required
+
+services:
+  - docker
+  - postgresql
+
 language: python
 
 addons:
@@ -8,8 +14,11 @@ addons:
     # for docs
     - graphviz
 
-install: pip install pytest
+install: pip install pytest psycopg2
 
+before_script:
+  - psql -c "CREATE DATABASE mydb;" -U postgres
+  - psql -c "CREATE USER test WITH PASSWORD 'test';" -U postgres
 
 jobs:
   include:
@@ -17,6 +26,7 @@ jobs:
 
 script: 
   - python setup.py install
+  - python scripts/conn.py
   - pytest
 
 
