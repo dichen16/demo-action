@@ -1,40 +1,29 @@
 os: linux
-
-sudo: required
-
-services:
-  - docker
-  - postgresql
-
-addons:
-  postgresql: "10"
-  apt:
-    packages:
-    - postgresql-10
-    - postgresql-client-10
+sudo: true
 
 language: python
 
+python:
+  - "3.6"
+
 addons:
-  apt:
-    packages:
-    # for docs
-    - graphviz
+  postgresql: "10"
 
 install: pip install pytest psycopg2
 
 before_script:
-  - postmaster --version
+  - sudo /etc/init.d/postgresql stop
+  - sudo apt-get update
+  - sudo apt-get install --yes postgresql-10
+  - sudo apt-get install --yes postgresql-client-10
+  - sudo cp /etc/postgresql/{9.6,10}/main/pg_hba.conf
+  - sudo /etc/init.d/postgresql restart
+  - sleep 2
   - psql -c "CREATE DATABASE mydb;" -U postgres
   - psql -c "CREATE USER test WITH PASSWORD 'test';" -U postgres
 
-jobs:
-  include:
-  - python: "3.6"
-
 script: 
+  - postmaster --version
   - python setup.py install
   - python scripts/conn.py
   - pytest
-
-
