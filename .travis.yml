@@ -1,0 +1,22 @@
+os: linux
+
+language: python
+
+addons:
+  apt:
+    packages:
+    # for docs
+    - graphviz
+
+install: pip install pytest
+
+
+jobs:
+  include:
+  - python: "3.6"
+
+script: 
+  - python setup.py install
+  - pytest
+
+
