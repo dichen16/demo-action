@@ -29,4 +29,10 @@ script:
   - python scripts/conn.py
   - pytest
   - awslocal s3 mb s3://my-test-bucket
-  - python scripts/localstack.py  
+  - python scripts/localstack.py
+  - pip install -r requirements.txt
+  - sphinx-build -M html docs docs/_build
+
+
+after_success:
+- scripts/push-docs
